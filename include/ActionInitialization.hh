@@ -1,0 +1,30 @@
+#ifndef ACTIONINITIALIZATION_HH
+#define ACTIONINITIALIZATION_HH
+
+#include "G4VUserActionInitialization.hh"
+#include "G4Threading.hh"
+#include "Randomize.hh"
+
+#include <ctime>
+
+#include "PrimaryGenerator.hh"
+#include "SteppingAction.hh"
+#include "TrackingAction.hh"
+#include "DetectorConstruction.hh"
+#include "RunAction.hh"
+
+class ActionInitialization : public G4VUserActionInitialization
+{
+public:
+    ActionInitialization(DetectorConstruction* det);
+    ~ActionInitialization();
+
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
+
+private:
+    DetectorConstruction* fDetectorConstruction;
+
+};
+
+#endif

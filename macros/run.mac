@@ -1,0 +1,7 @@
+/run/numberOfThreads 4
+/run/initialize
+
+# Set the source type
+/run/
+
+/run/beamOn 1000000
