@@ -22,6 +22,8 @@ private:
     PrimaryGenerator* fPrimaryGenerator;
 
     G4UIcmdWithAString* neuSourceCmd;
+    G4UIcommand* energyRangeCmd;
+
 };
 
 #endif

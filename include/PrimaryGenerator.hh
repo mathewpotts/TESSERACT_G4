@@ -34,6 +34,9 @@ public:
     // Setter for fSourceType
     void SetSourceType(const G4String& type);
 
+    //Setter for the energy range
+    void SetEnergyRange(G4double emin, G4double emax);
+
 private:
     G4ParticleGun *fParticleGun;
     DetectorConstruction* fDetectorConstruction;
@@ -54,6 +57,10 @@ private:
     
     // Variable to hold source type
     G4String fSourceType;
+
+    //Variable for CR erange
+    G4double fEmin = 1.;
+    G4double fEmax = 1e3;
 };
 
 

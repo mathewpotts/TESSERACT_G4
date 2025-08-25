@@ -49,6 +49,12 @@ void PrimaryGenerator::SetSourceType(const G4String& type) {
     }
 }
 
+void PrimaryGenerator::SetEnergyRange(G4double emin, G4double emax)
+{
+    fEmin = emin;
+    fEmax = emax;
+}
+
 void PrimaryGenerator::LoadSpectrum(const G4String& filename) {
     std::ifstream file(filename);
     G4String line;
@@ -143,7 +149,7 @@ void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
     } else if (fSourceType == "AmBe") {
         energy = sampleEnergyAmBe();
     } else if (fSourceType == "CR" ) {
-        energy = EnergyCR(1e-8, 1e-5);
+        energy = EnergyCR(fEmin, fEmax);
     }
     
     fParticleGun->SetParticleEnergy(energy);
