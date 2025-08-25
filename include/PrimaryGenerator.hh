@@ -60,7 +60,7 @@ private:
 
     //Variable for CR erange
     G4double fEmin = 1.;
-    G4double fEmax = 1e3;
+    G4double fEmax = 10.;
 };
 
 

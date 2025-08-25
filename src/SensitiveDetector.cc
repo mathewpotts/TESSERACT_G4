@@ -67,6 +67,9 @@ G4bool SensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
     // Get the copyNo
     const G4VTouchable *touchable = aStep->GetPreStepPoint()->GetTouchable();
     G4int copyNo = touchable->GetCopyNumber();
+
+    // Get kinetic energy
+    G4double fKE = track->GetKineticEnergy();
     
     analMan->FillNtupleIColumn(0, 0, eventID);
     analMan->FillNtupleIColumn(0, 1, copyNo);
@@ -77,6 +80,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step *aStep, G4TouchableHistory *ROhist)
     analMan->FillNtupleSColumn(0, 6, particle);
     analMan->FillNtupleSColumn(0, 7, creatorName);
     analMan->FillNtupleDColumn(0, 8, fEnergyDeposited / MeV);
+    analMan->FillNtupleDColumn(0, 9, fKE);
     
     
     if (fEnergyDeposited > 0) {

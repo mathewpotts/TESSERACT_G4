@@ -18,6 +18,7 @@ public:
 private:
     G4double fTotalEnergyDeposited;
     G4int fInteractionCopyNo;
+    G4String fInteractionType;
 
     virtual void Initialize(G4HCofThisEvent *) override;
     virtual void EndOfEvent(G4HCofThisEvent *) override;

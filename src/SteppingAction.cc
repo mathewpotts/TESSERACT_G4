@@ -25,18 +25,25 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     G4StepPoint* preStepPoint = step->GetPreStepPoint();
     G4StepPoint* postStepPoint = step->GetPostStepPoint();
     const G4VProcess* process = postStepPoint->GetProcessDefinedStep();
-    if (process) {
+
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    
+    if (process && info->IsPrimary()) {
         G4String procName = process->GetProcessName();
         
-        if (procName == "nCapture" || procName == "hadElastic" || procName == "neutronInelastic") {
+        if (procName != "Transportation" && procName != "NoProcess") {
             G4double E_pre  = preStepPoint->GetKineticEnergy();
             G4double E_post = postStepPoint->GetKineticEnergy();
             G4double deltaE = E_pre - E_post;
             G4ThreeVector position = preStepPoint->GetPosition();
             
-                G4cout << "SteppingAction::UserSteppingAction Neutron interaction (" << procName << ") at "
-                       << position << ", dE = " << deltaE / keV << " keV" << G4endl;
-        }
+            G4cout << "SteppingAction::UserSteppingAction Neutron interaction (" << procName << ") at "
+                   << position << ", dE = " << deltaE / keV << " keV" << G4endl;
+
+            // Fill the primary interaction type
+            analysisManager->FillNtupleSColumn(1, 3, procName);
+            analysisManager->FillNtupleDColumn(1, 4, deltaE / MeV);
+        } 
     }
     
     if (info->IsPrimary()) {
@@ -61,6 +68,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                && (preCopyNo == birthCopyNo && postCopyNo != birthCopyNo)) {
         G4cout << "SteppingAction::UserSteppingAction Killing secondary track " << track->GetTrackID()
                << " (" << track->GetDefinition()->GetParticleName()
+               << ", KE: " << track->GetKineticEnergy() / keV << " keV" 
                << ") attempting to leave birth volume (CopyNo " << birthCopyNo
                << "). Next volume CopyNo: " << postCopyNo << G4endl;
         track->SetTrackStatus(fStopAndKill);

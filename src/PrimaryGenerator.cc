@@ -157,7 +157,7 @@ void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
     // Fill the primary energy spectrum
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillH1(1, energy);
-    analysisManager->FillNtupleDColumn(1, 3, energy);
+    analysisManager->FillNtupleDColumn(1, 5, energy);
     
     //Set position
     G4ThreeVector pos = randomPos();

@@ -32,12 +32,15 @@ RunAction::RunAction()
     analManager->CreateNtupleSColumn("fParticleName");
     analManager->CreateNtupleSColumn("fCreatorProcess");
     analManager->CreateNtupleDColumn("fEDep");
+    analManager->CreateNtupleDColumn("fKE");
     analManager->FinishNtuple(0);
 
     analManager->CreateNtuple("Interacted","Interacted");
     analManager->CreateNtupleIColumn("fHasInteracted");
     analManager->CreateNtupleDColumn("fTotalEnergyDep");
     analManager->CreateNtupleIColumn("fInteractionCopyNo");
+    analManager->CreateNtupleSColumn("fInteractionType");
+    analManager->CreateNtupleDColumn("fDeltaKE");
     analManager->CreateNtupleDColumn("fPrimaryEnergy");
     analManager->FinishNtuple(1);
 }
