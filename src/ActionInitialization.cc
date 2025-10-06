@@ -30,15 +30,11 @@ void ActionInitialization::Build() const
     G4Random::setTheSeed(seed);
 
     G4cout << "[Seed] Using random seed: " << seed << G4endl;
-    
-    PrimaryGenerator *generator = new PrimaryGenerator(fDetectorConstruction);
-    SteppingAction *stepping = new SteppingAction();
-    TrackingAction *tracking = new TrackingAction();
-    RunAction *runaction  = new RunAction();
-    
-    SetUserAction(generator);
-    SetUserAction(runaction);
-    SetUserAction(stepping);
-    SetUserAction(tracking);
+
+    SetUserAction(new StackingAction());
+    SetUserAction(new PrimaryGenerator(fDetectorConstruction));
+    SetUserAction(new RunAction());
+    SetUserAction(new SteppingAction());
+    SetUserAction(new TrackingAction());
 
 }

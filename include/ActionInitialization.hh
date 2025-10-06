@@ -8,6 +8,7 @@
 #include <ctime>
 
 #include "PrimaryGenerator.hh"
+#include "StackingAction.hh"
 #include "SteppingAction.hh"
 #include "TrackingAction.hh"
 #include "DetectorConstruction.hh"

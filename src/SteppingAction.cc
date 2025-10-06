@@ -13,6 +13,7 @@ SteppingAction::~SteppingAction()
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
     G4Track* track = step->GetTrack();
+    G4ParticleDefinition* particle = track->GetDefinition();
     auto* info = static_cast<TrackingInfo*>(track->GetUserInformation());
     if (!info) return;
 
@@ -67,11 +68,10 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     } else if (!info->IsPrimary()
                && (preCopyNo == birthCopyNo && postCopyNo != birthCopyNo)) {
         G4cout << "SteppingAction::UserSteppingAction Killing secondary track " << track->GetTrackID()
-               << " (" << track->GetDefinition()->GetParticleName()
+               << " (" << particle->GetParticleName()
                << ", KE: " << track->GetKineticEnergy() / keV << " keV" 
                << ") attempting to leave birth volume (CopyNo " << birthCopyNo
                << "). Next volume CopyNo: " << postCopyNo << G4endl;
         track->SetTrackStatus(fStopAndKill);
     }
 }
-

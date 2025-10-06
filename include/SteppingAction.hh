@@ -23,6 +23,7 @@ public:
     ~SteppingAction();
 
     virtual void UserSteppingAction(const G4Step* step) override;
+    
 };
 
 #endif
