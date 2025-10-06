@@ -1,8 +1,21 @@
 /run/numberOfThreads 4
+
+# Histograms
+/analysis/h1/create Edep "Energy deposit" 1000 0. 10. MeV
+/analysis/h1/setTitle 0 "Neutron Energy deposited"
+/analysis/h1/setXaxis 0 "Energy(MeV)"
+/analysis/h1/setYaxis 0 "Counts"
+/analysis/h1/create Neuspec "Neutron Spectrum" 1000 0. 10. MeV
+/analysis/h1/setTitle 1 "Neutron Spectrum"
+/analysis/h1/setXaxis 1 "Energy(MeV)"
+/analysis/h1/setYaxis 1 "Counts"
+
 /run/initialize
 
 # Set the source type
+## setSource: <CR, AmBe, DD>
+## setEnergyRange: Min and Max energy of CR spectrum units of MeV
 /generator/setSource CR
 /generator/setEnergyRange 1. 1e3
 
-/run/beamOn 10000
+/run/beamOn 100

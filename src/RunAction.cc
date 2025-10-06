@@ -3,7 +3,7 @@
 RunAction::RunAction()
 {
     G4AnalysisManager *analManager = G4AnalysisManager::Instance();
-
+    /*
     analManager->CreateH1("Edep", "Energy deposit", 1000, 0.,10. * keV);
     analManager->SetH1Title(0, "Neutron Energy deposited");
     analManager->SetH1XAxisTitle(0, "Energy (MeV)");
@@ -13,7 +13,7 @@ RunAction::RunAction()
     analManager->SetH1Title(1, "Neutron Spectrum");
     analManager->SetH1XAxisTitle(1, "Energy (MeV)");
     analManager->SetH1YAxisTitle(1, "Counts");
-    
+    */
     analManager->CreateH2("Edep_xy","XY EnergyDeposition",
                           100, -0.5*cm, 0.5*cm,
                           100, -0.5*cm, 0.5*cm);
