@@ -55,6 +55,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 if (secondaries && !secondaries->empty()) {
                     const G4Track* recoilSi = nullptr;
 
+                    const G4VProcess* process = postStepPoint->GetProcessDefinedStep();
+                    G4String secProcName = process ? process->GetProcessName() : "";
+                    G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+                    G4int copyNo  = preStepPoint->GetTouchable()->GetCopyNumber();
+
                     // 1) try to find a Si recoil only for elastic scattering
                     if (procName == "hadElastic") {
                         for (const G4Track* sec : *secondaries) {
@@ -68,9 +73,19 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
                     if (recoilSi) {
                         // Case 1: we have an explicit Si recoil
-                        recoilOrFragKE = recoilSi->GetKineticEnergy();
+                        G4double recoilE = recoilSi->GetKineticEnergy();
+                        G4String secName = recoilSi->GetDefinition()->GetParticleName();
+                        
                         G4cout << "SteppingAction::UserSteppingAction Found Si recoil: KE = "
-                               << recoilOrFragKE / keV << " keV" << G4endl;
+                               << recoilE / keV << " keV" << G4endl;
+
+                        // log this fragment tree
+                        analysisManager->FillNtupleIColumn(2, 0, eventID);
+                        analysisManager->FillNtupleIColumn(2, 1, copyNo);
+                        analysisManager->FillNtupleSColumn(2, 2, secProcName);
+                        analysisManager->FillNtupleSColumn(2, 3, secName);
+                        analysisManager->FillNtupleDColumn(2, 4, recoilE / MeV);
+                        analysisManager->AddNtupleRow(2);
                     } else {
                         // Case 2: no explicit Si recoil – sum KE of nucleus+fragments
                         G4double sumFragKE = 0.0;
@@ -78,31 +93,36 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                         for (const G4Track* sec : *secondaries) {
                             auto* def = sec->GetDefinition();
                             G4String secName = def->GetParticleName();
-                            G4String secType = def->GetParticleType();
 
-                            // Skip pure EM secondaries
-                            if (secName == "gamma" ||
-                                secName == "e-"   ||
-                                secName == "e+") continue;
+                            G4double KE = sec->GetKineticEnergy();
 
-                            // Optionally also treat muons as EM:
-                            if (secName == "mu+" || secName == "mu-") continue;
+                            // log this fragment tree
+                            analysisManager->FillNtupleIColumn(2, 0, eventID);
+                            analysisManager->FillNtupleIColumn(2, 1, copyNo);
+                            analysisManager->FillNtupleSColumn(2, 2, secProcName);
+                            analysisManager->FillNtupleSColumn(2, 3, secName);
+                            analysisManager->FillNtupleDColumn(2, 4, KE / MeV);
+                            analysisManager->AddNtupleRow(2);
+
+                            // Skip EM secondaries and neutrinos
+                            if (secName == "gamma"   ||
+                                secName == "e-"      ||
+                                secName == "e+"      ||
+                                secName == "mu+"     ||
+                                secName == "mu-"     ||
+                                secName == "nu_e"    ||
+                                secName == "anti_nu_e" ||
+                                secName == "nu_mu"   ||
+                                secName == "anti_nu_mu" ||
+                                secName == "nu_tau"  ||
+                                secName == "anti_nu_tau") {
+                                continue;
+                            }
 
                             // Everything else is considered "fragment"
                             bool isFragment = true;
-                            
-                            /*
-                            // Accept "nucleus" type and common fragments
-                            bool isFragment = (secType == "nucleus") ||
-                                              secName == "proton"   ||
-                                              secName == "neutron"  ||
-                                              secName == "deuteron" ||
-                                              secName == "triton"   ||
-                                              secName == "He3"      ||
-                                              secName == "alpha";
-                            */
                             if (isFragment) {
-                                sumFragKE += sec->GetKineticEnergy();
+                                sumFragKE += KE;
                             }
                         }
 
@@ -112,8 +132,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     }
                 }
 
-                // Store recoil or fragment KE in Interacted ntuple (column index 6)
-                analysisManager->FillNtupleDColumn(1, 6, recoilOrFragKE / MeV);
+                // Store recoil or fragment KE in Interacted ntuple 
+                analysisManager->FillNtupleDColumn(2, 5, recoilOrFragKE / MeV);
             }
         }
     }
