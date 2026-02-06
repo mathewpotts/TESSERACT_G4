@@ -42,6 +42,7 @@ RunAction::RunAction()
     analManager->CreateNtupleSColumn("fInteractionType");
     analManager->CreateNtupleDColumn("fDeltaKE");
     analManager->CreateNtupleDColumn("fPrimaryEnergy");
+    analManager->CreateNtupleDColumn("fFragKE"); // NEW: KE of nucleus+fragments
     analManager->FinishNtuple(1);
 }
 

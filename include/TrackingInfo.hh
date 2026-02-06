@@ -23,12 +23,23 @@ public:
     }
     G4int GetInteractionCopyNo() const { return fInteractionCopyNo; }
 
+    bool HasRecordedFirstInteraction() const { return fRecordedFirstInteraction; }
+    void SetFirstInteractionKE(G4double ke) {
+        fRecordedFirstInteraction = true;
+        fFirstInteractionKE = ke;
+    }
+    G4double GetFirstInteractionKE() const { return fFirstInteractionKE; }
+
+
 private:
     G4bool fIsPrimary;
     G4VPhysicalVolume* fBirthVolume;
     G4int fCopyNo;
     bool fHasInteracted;
     G4int fInteractionCopyNo = -1;
+
+    bool     fRecordedFirstInteraction;
+    G4double fFirstInteractionKE;
 };
 
 #endif

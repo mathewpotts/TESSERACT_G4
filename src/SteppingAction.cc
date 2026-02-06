@@ -44,7 +44,78 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             // Fill the primary interaction type
             analysisManager->FillNtupleSColumn(1, 3, procName);
             analysisManager->FillNtupleDColumn(1, 4, deltaE / MeV);
-        } 
+
+            // Only do this on the FIRST interaction of the primary
+            // (we can key off info->HasInteracted(), which you set below)
+            if (!info->HasInteracted()) {
+
+                const auto* secondaries = step->GetSecondaryInCurrentStep();
+                G4double recoilOrFragKE = 0.0;
+
+                if (secondaries && !secondaries->empty()) {
+                    const G4Track* recoilSi = nullptr;
+
+                    // 1) try to find a Si recoil only for elastic scattering
+                    if (procName == "hadElastic") {
+                        for (const G4Track* sec : *secondaries) {
+                            G4String secName = sec->GetDefinition()->GetParticleName();
+                            if (secName.contains("Si")) { // e.g. "Si28", "Si29", ...
+                                recoilSi = sec;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (recoilSi) {
+                        // Case 1: we have an explicit Si recoil
+                        recoilOrFragKE = recoilSi->GetKineticEnergy();
+                        G4cout << "SteppingAction::UserSteppingAction Found Si recoil: KE = "
+                               << recoilOrFragKE / keV << " keV" << G4endl;
+                    } else {
+                        // Case 2: no explicit Si recoil – sum KE of nucleus+fragments
+                        G4double sumFragKE = 0.0;
+
+                        for (const G4Track* sec : *secondaries) {
+                            auto* def = sec->GetDefinition();
+                            G4String secName = def->GetParticleName();
+                            G4String secType = def->GetParticleType();
+
+                            // Skip pure EM secondaries
+                            if (secName == "gamma" ||
+                                secName == "e-"   ||
+                                secName == "e+") continue;
+
+                            // Optionally also treat muons as EM:
+                            if (secName == "mu+" || secName == "mu-") continue;
+
+                            // Everything else is considered "fragment"
+                            bool isFragment = true;
+                            
+                            /*
+                            // Accept "nucleus" type and common fragments
+                            bool isFragment = (secType == "nucleus") ||
+                                              secName == "proton"   ||
+                                              secName == "neutron"  ||
+                                              secName == "deuteron" ||
+                                              secName == "triton"   ||
+                                              secName == "He3"      ||
+                                              secName == "alpha";
+                            */
+                            if (isFragment) {
+                                sumFragKE += sec->GetKineticEnergy();
+                            }
+                        }
+
+                        recoilOrFragKE = sumFragKE;
+                        G4cout << "SteppingAction::UserSteppingAction No Si recoil found; sum(fragment KE) = "
+                               << sumFragKE / keV << " keV" << G4endl;
+                    }
+                }
+
+                // Store recoil or fragment KE in Interacted ntuple (column index 6)
+                analysisManager->FillNtupleDColumn(1, 6, recoilOrFragKE / MeV);
+            }
+        }
     }
     
     if (info->IsPrimary()) {
