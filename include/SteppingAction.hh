@@ -13,6 +13,7 @@
 #include "G4ios.hh"            // for G4cout, G4endl
 #include "G4AnalysisManager.hh"
 #include "globals.hh"
+#include "G4RunManager.hh"
 
 #include "TrackingInfo.hh"
 

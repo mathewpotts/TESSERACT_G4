@@ -22,7 +22,7 @@ RunAction::RunAction()
     analManager->SetH2YAxisTitle(0, "Y position (mm)");
     analManager->SetH2ZAxisTitle(0, "Deposited Energy (MeV)");
 
-    analManager->CreateNtuple("Particles","Particles");
+    analManager->CreateNtuple("Particles","All particles");
     analManager->CreateNtupleIColumn("iEvent");
     analManager->CreateNtupleIColumn("copyNo");
     analManager->CreateNtupleDColumn("fX");
@@ -35,15 +35,23 @@ RunAction::RunAction()
     analManager->CreateNtupleDColumn("fKE");
     analManager->FinishNtuple(0);
 
-    analManager->CreateNtuple("Interacted","Interacted");
+    analManager->CreateNtuple("Primaries","Info on primary interactions");
     analManager->CreateNtupleIColumn("fHasInteracted");
     analManager->CreateNtupleDColumn("fTotalEnergyDep");
     analManager->CreateNtupleIColumn("fInteractionCopyNo");
     analManager->CreateNtupleSColumn("fInteractionType");
     analManager->CreateNtupleDColumn("fDeltaKE");
     analManager->CreateNtupleDColumn("fPrimaryEnergy");
-    analManager->CreateNtupleDColumn("fFragKE"); // NEW: KE of nucleus+fragments
     analManager->FinishNtuple(1);
+
+    analManager->CreateNtuple("Secondaries","Immediate Secondaries after primary interaction");
+    analManager->CreateNtupleIColumn("iEvent");        
+    analManager->CreateNtupleIColumn("copyNo");        
+    analManager->CreateNtupleSColumn("fCreatorProcess");       
+    analManager->CreateNtupleSColumn("fParticleName");      
+    analManager->CreateNtupleDColumn("fKE");
+    analManager->CreateNtupleDColumn("fTotalKE"); // NEW: KE of nucleus+fragments        
+    analManager->FinishNtuple(2);
 }
 
 RunAction::~RunAction()
