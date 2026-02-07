@@ -94,15 +94,33 @@ G4double PrimaryGenerator::EnergyDD()
 // Energy of CR
 G4double PrimaryGenerator::EnergyCR(G4double E_min, G4double E_max)
 {
+    // If user requests a single energy (or nearly so), just return it directly
+    if (std::fabs(E_max - E_min) < 1e-9) {
+        // Clamp to available energy range if needed
+        if (!energies.empty()) {
+            if (E_min < energies.front()) return energies.front();
+            if (E_min > energies.back())  return energies.back();
+        }
+        return E_min;
+    }
+
+    // Ensure E_min <= E_max
+    if (E_min > E_max) std::swap(E_min, E_max);
+
     // Find index range corresponding to [E_min, E_max]
     auto it_low = std::lower_bound(energies.begin(), energies.end(), E_min);
     auto it_high = std::upper_bound(energies.begin(), energies.end(), E_max);
 
+    // No overlap with available energies
     if (it_low == energies.end() || it_low == it_high)
         return 0.0; // or handle error: no energies in this range
 
     size_t start = std::distance(energies.begin(), it_low);
     size_t end = std::distance(energies.begin(), it_high);
+
+     // Need at least two points to do a meaningful CDF normalization
+    if (end - start < 2)
+        return energies[start];  // effectively a single discrete energy
 
     // Slice the CDF and energies vectors
     std::vector<double> sub_cdf(cdf.begin() + start, cdf.begin() + end);
