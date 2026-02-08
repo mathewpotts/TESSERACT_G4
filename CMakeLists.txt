@@ -43,6 +43,12 @@ file(GLOB MACRO_FILES "macros/*.mac")
 file(COPY ${MACRO_FILES} DESTINATION ${CMAKE_BINARY_DIR}/)
 
 #----------------------------------------------------------------------------
+# Copy all bash files
+
+file(GLOB BASH_FILES "*.sh")
+file(COPY ${BASH_FILES} DESTINATION ${CMAKE_BINARY_DIR}/)
+
+#----------------------------------------------------------------------------
 # Copy all resource files
 
 file(GLOB RESOURCES_FILES "resources/*.csv")
