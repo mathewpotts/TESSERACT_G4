@@ -43,7 +43,7 @@ for E_CENTER in "${energies[@]}"; do
     echo "Running with central energy ${E_CENTER}, range ${E_MIN} – ${E_MAX}"
 
     # Edit run.mac
-    sed -i "s|^/analysis/h1/create Edep \"Energy deposit\" 1000 .*|/analysis/h1/create Edep \"Energy deposit\" 1000 ${E_MIN} ${E_MAX} MeV|" "$MAC_FILE"
+    sed -i "s|^/analysis/h1/create Edep \"Energy deposit\" 1000 .*|/analysis/h1/create Edep \"Energy deposit\" 1000 0. ${E_MAX} MeV|" "$MAC_FILE"
 
     sed -i "s|^/analysis/h1/create Neuspec \"Neutron Spectrum\" 1000 .*|/analysis/h1/create Neuspec \"Neutron Spectrum\" 1000 ${E_MIN} ${E_MAX} MeV|" "$MAC_FILE"
 
